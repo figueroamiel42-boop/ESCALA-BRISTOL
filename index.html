@@ -397,6 +397,8 @@
         signature: "Severamente dura",
         colorA: "#b9783b",
         colorB: "#7e4e27",
+        care: "Revisar hidratación, fibra, ejercicio y posible dolor al evacuar; vigilar si hay tensión abdominal o estreñimiento persistente.",
+        warning: "Si hay sangre en heces, dolor intenso o estreñimiento prolongado, requiere valoración clínica.",
         svg: `
           <svg viewBox="0 0 260 130" aria-hidden="true">
             <g fill="none" stroke="#f4f5e9" stroke-width="2" opacity="0.9">
@@ -419,6 +421,8 @@
         signature: "Dura y fragmentada",
         colorA: "#bd7b3e",
         colorB: "#86552b",
+        care: "Valorar fibra, líquido, actividad física y hábitos intestinales; observar si hay esfuerzo o dolor al evacuar.",
+        warning: "Si persiste o aumenta la frecuencia de estreñimiento, requiere evaluación clínica.",
         svg: `
           <svg viewBox="0 0 260 130" aria-hidden="true">
             <g fill="#b97b3d" stroke="#7a4a23" stroke-width="2">
@@ -437,6 +441,8 @@
         signature: "Forma normal",
         colorA: "#c58b4a",
         colorB: "#8a5d2e",
+        care: "Mantener hábitos regulares, hidratación adecuada y seguimiento del patrón habitual de evacuación.",
+        warning: "Si aparece dolor, sangre, diarrea o cambios bruscos, valorar y registrar.",
         svg: `
           <svg viewBox="0 0 260 130" aria-hidden="true">
             <g fill="#c58b4a" stroke="#81572d" stroke-width="2">
@@ -455,6 +461,8 @@
         signature: "Normal",
         colorA: "#c3914f",
         colorB: "#91713a",
+        care: "Mantener rutina intestinal saludable, hidratación, fibra y seguimiento de variaciones puntuales.",
+        warning: "No requiere intervención específica salvo cambios bruscos, dolor o diarrea persistente.",
         svg: `
           <svg viewBox="0 0 260 130" aria-hidden="true">
             <g fill="#c89146" stroke="#806334" stroke-width="2">
@@ -473,6 +481,8 @@
         signature: "Blanda",
         colorA: "#c88f53",
         colorB: "#8a5d2e",
+        care: "Observar si la frecuencia aumenta, revisar dieta, hidratos, medicamentos y urgencia para evacuar.",
+        warning: "Si se acompaña de diarrea, dolor o deshidratación, valorar con clínica.",
         svg: `
           <svg viewBox="0 0 260 130" aria-hidden="true">
             <g fill="#c28d4c" stroke="#7a4f2d" stroke-width="2">
@@ -494,6 +504,8 @@
         signature: "Pastosa",
         colorA: "#c48a4d",
         colorB: "#8d643a",
+        care: "Valorar hidratación, pérdidas de líquidos, duración, frecuencia y posible relación con alimentos o fármacos.",
+        warning: "Si hay fiebre, dolor intensivo, sangre o deshidratación, necesita valoración clínica urgente.",
         svg: `
           <svg viewBox="0 0 260 130" aria-hidden="true">
             <g fill="#c48a4d" stroke="#7d5633" stroke-width="2">
@@ -512,6 +524,8 @@
         signature: "Líquida",
         colorA: "#d2a35b",
         colorB: "#a06b33",
+        care: "Controlar rehidratación, pérdidas, frecuencia y signos de alarma; valorar si hay fiebre, vómitos o debilidad.",
+        warning: "La diarrea acuosa con deshidratación, sangre, dolor abdominal intenso o vómitos requiere valoración médica inmediata.",
         svg: `
           <svg viewBox="0 0 260 130" aria-hidden="true">
             <g fill="#d2a35b" stroke="#8d6136" stroke-width="2">
@@ -527,8 +541,9 @@
 
     const referenceGrid = document.getElementById('referenceGrid');
     const typesContainer = document.getElementById('types');
+    let selectedType = null;
 
-    function createCard(item, isSelection = false) {
+    function createCard(item) {
       const card = document.createElement('div');
       card.className = 'type-card';
       card.innerHTML = `
@@ -537,17 +552,11 @@
         <div class="caption">${item.signature}</div>
         <div class="tagline">${item.description}</div>
       `;
-      if (isSelection) {
-        card.style.border = '2px solid rgba(255,255,255,0.2)';
-        card.style.background = 'rgba(56, 126, 149, 0.96)';
-      }
       return card;
     }
 
     function renderReferences() {
-      bristol.forEach(item => {
-        referenceGrid.appendChild(createCard(item, false));
-      });
+      bristol.forEach(item => referenceGrid.appendChild(createCard(item)));
     }
 
     function renderTypes() {
@@ -570,7 +579,20 @@
       });
     }
 
-    let selectedType = null;
+    function normalizeText(value) {
+      return (value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function detectWarningFlags(symptomsText, observationsText) {
+      const text = normalizeText((symptomsText || '') + ' ' + (observationsText || ''));
+      const redFlags = [
+        'sangre', 'hematoquezia', 'heces negras', 'melena', 'dolor intenso',
+        'vómitos', 'deshidratacion', 'debilidad', 'fiebre', 'calambres fuertes',
+        'hinchazon', 'distension', 'vomito'
+      ];
+      const match = redFlags.some(flag => text.includes(flag));
+      return match;
+    }
 
     function selectType(type) {
       selectedType = type;
@@ -595,23 +617,75 @@
       const patient = document.getElementById('patient').value.trim();
       const age = document.getElementById('age').value;
       const date = document.getElementById('date').value;
+      const frequency = document.getElementById('frequency').value;
+      const symptoms = document.getElementById('symptoms').value.trim();
+      const observations = document.getElementById('observations').value.trim();
+      const hasRedFlag = detectWarningFlags(symptoms, observations);
+
+      let overallCategory = 'No requiere intervención urgente';
+      let nursingPlan = item.care;
+      let clinicalSummary = '';
+
+      if (item.type >= 1 && item.type <= 2) {
+        overallCategory = 'Riesgo de estreñimiento / tránsito lento';
+        clinicalSummary = 'La consistencia indica tránsito intestinal lento o dificultad para evacuar.';
+        nursingPlan = 'Revisar hidratación, fibra, actividad física, medicación y esfuerzo al evacuar. Observar si hay dolor o distensión y registrar frecuencia.';
+      } else if (item.type === 3 || item.type === 4) {
+        overallCategory = 'Consistencia dentro del rango habitual';
+        clinicalSummary = 'La consistencia es compatible con un patrón intestinal normal o cercano a lo habitual.';
+        nursingPlan = 'Mantener hábitos regulares de hidratación, dieta y actividad física. Continuar seguimiento de cambios y síntomas.';
+      } else if (item.type === 5) {
+        overallCategory = 'Riesgo moderado de tránsito acelerado';
+        clinicalSummary = 'Se observa transición hacia una consistencia más blanda, potencialmente relacionada con cambios dietéticos, medicamentos o aumento de la frecuencia.';
+        nursingPlan = 'Valorar dieta, medicación, hidración y urgencia al evacuar. Observar si progresa a diarrea o if frequency increases.';
+      } else if (item.type >= 6) {
+        overallCategory = 'Riesgo de diarrea / tránsito acelerado';
+        clinicalSummary = 'La consistencia pastosa o líquida sugiere aumento del tránsito intestinal y posible pérdida de líquidos.';
+        nursingPlan = 'Monitorizar hidratación, frecuencia, duración y evolución; considerar rehidratación oral si procede y vigilar signos de deshidratación.';
+      }
+
+      if (hasRedFlag) {
+        overallCategory = 'Requiere valoración clínica';
+        clinicalSummary = 'Se detectan señales de alarma que justifican evaluación médica inmediata o más exhaustiva.';
+        nursingPlan = 'Registrar signos de alarma, valorar vitalidad, hidratación, dolor abdominal, sangre, vómitos o fiebre y avisar al profesional responsable.';
+      }
+
+      if (frequency && normalizeText(frequency).includes('mas de una vez al dia')) {
+        overallCategory = 'Frecuencia alta: valorar diarrea o tránsito acelerado';
+      }
+
+      if (frequency && normalizeText(frequency).includes('menos de 3 veces por semana')) {
+        overallCategory = 'Frecuencia baja: valorar estreñimiento';
+      }
+
+      const patientName = patient || 'No especificado';
+      const ageText = age ? `${age} años` : 'No especificada';
+      const dateText = date || 'No especificada';
+      const freqText = frequency || 'No especificada';
+      const symptomText = symptoms || 'No especificados';
+      const obsText = observations || 'Sin observaciones';
 
       document.getElementById('patientResult').textContent =
-        'Paciente: ' + (patient || 'No especificado') +
-        ' | Edad: ' + (age ? age + ' años' : 'No especificada') +
-        ' | Fecha: ' + (date || 'No especificada');
+        `Paciente: ${patientName} | Edad: ${ageText} | Fecha: ${dateText}`;
 
-      document.getElementById('typeResult').textContent = 'Tipo ' + item.type + ' — ' + item.title;
+      document.getElementById('typeResult').textContent = `Tipo ${item.type} — ${item.title}`;
       document.getElementById('description').textContent = item.description;
-      document.getElementById('interpretation').textContent = item.signature;
-      document.getElementById('care').textContent = item.description;
-      document.getElementById('frequencyResult').textContent = document.getElementById('frequency').value || 'No especificada';
-      document.getElementById('symptomsResult').textContent = document.getElementById('symptoms').value.trim() || 'No especificados';
-      document.getElementById('observationsResult').textContent = document.getElementById('observations').value.trim() || 'Sin observaciones';
+      document.getElementById('interpretation').textContent = `${item.signature}. ${clinicalSummary}`;
+      document.getElementById('care').textContent = nursingPlan + (hasRedFlag ? ` ${item.warning}` : '');
+      document.getElementById('frequencyResult').textContent = freqText;
+      document.getElementById('symptomsResult').textContent = symptomText;
+      document.getElementById('observationsResult').textContent = obsText;
 
-      const result = document.getElementById('result');
-      result.style.display = 'block';
-      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const resultBox = document.getElementById('result');
+      resultBox.style.display = 'block';
+      resultBox.insertAdjacentHTML('beforeend', `
+        <div class="notice" style="margin-top:16px;">
+          <strong>Resumen final:</strong> ${overallCategory}.<br>
+          <strong>Conclusión:</strong> La consistencia observada corresponde a una evacuación de tipo ${item.type}, con una valoración orientativa de ${item.description.toLowerCase()}.
+        </div>
+      `);
+
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function resetForm() {
@@ -623,7 +697,9 @@
         card.style.boxShadow = '0 6px 18px rgba(28, 83, 96, 0.12)';
       });
       document.getElementById('selection').textContent = 'Ningún tipo seleccionado.';
-      document.getElementById('result').style.display = 'none';
+      const result = document.getElementById('result');
+      result.style.display = 'none';
+      result.querySelectorAll('.notice').forEach(el => el.remove());
       document.getElementById('date').value = new Date().toISOString().split('T')[0];
     }
 

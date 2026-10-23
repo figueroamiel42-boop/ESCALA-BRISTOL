@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escala de Bristol | Enfermería</title>
+  <style>
+    :root {
+      --verde-oscuro: #28634d;
+      --verde-medio: #4f8a69;
+      --verde-claro: #dfeee4;
+      --verde-fondo: #f3f6f4;
+      --gris-texto: #24352e;
+      --gris-suave: #596b61;
+      --linea: #dbe5df;
+      --naranja: #d49b27;
+      --warning-bg: #fff5dc;
+      --blanco: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--verde-fondo);
+      color: var(--gris-texto);
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--verde-oscuro), #1e4f3b);
+      color: white;
+      padding: 28px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 3vw, 2.8rem);
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .panel {
+      background: var(--blanco);
+      padding: 22px 20px;
+      margin-bottom: 18px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      color: var(--verde-oscuro);
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: clamp(1.3rem, 2vw, 1.8rem);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #bdccc3;
+      border-radius: 8px;
+      font: inherit;
+      background: white;
+    }
+
+    textarea { resize: vertical; }
+
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .reference-card {
+      border: 2px solid var(--linea);
+      border-radius: 14px;
+      padding: 14px;
+      background: linear-gradient(180deg, #ffffff, #f8faf8);
+    }
+
+    .reference-card .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .type-badge {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background: var(--verde-oscuro);
+      color: #fff;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .reference-card h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--gris-texto);
+    }
+
+    .ref-figure {
+      background: #f4faf5;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 8px 0 10px;
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ecf2ee;
+    }
+
+    .ref-figure svg {
+      width: 100%;
+      max-width: 160px;
+      height: 90px;
+      display: block;
+    }
+
+    .muted {
+      color: var(--gris-suave);
+      font-size: 0.95rem;
+    }
+
+    .types {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .type {
+      border: 2px solid var(--linea);
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .type:hover {
+      border-color: #6eaa89;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(40, 99, 77, 0.08);
+    }
+
+    .type.selected {
+      border-color: var(--verde-oscuro);
+      background: var(--verde-claro);
+      box-shadow: inset 0 0 0 1px rgba(40, 99, 77, 0.12);
+    }
+
+    .type-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .number {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background: var(--verde-oscuro);
+      color: white;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .shape {
+      margin: 8px 0 6px;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8faf8;
+      border-radius: 10px;
+      border: 1px solid #edf3ef;
+    }
+
+    .shape svg {
+      width: 100%;
+      max-width: 160px;
+      height: 70px;
+      display: block;
+    }
+
+    button.action {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 5px 5px 5px 0;
+      transition: opacity 0.2s ease;
+    }
+
+    button.action:hover { opacity: 0.96; }
+
+    .primary { background: var(--verde-oscuro); color: white; }
+    .secondary { background: #e4ebe6; color: var(--gris-texto); }
+
+    #result { display: none; }
+
+    .result-number {
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      font-weight: bold;
+      color: var(--verde-oscuro);
+      margin: 8px 0;
+    }
+
+    .notice {
+      background: var(--warning-bg);
+      padding: 12px 14px;
+      border-left: 4px solid var(--naranja);
+      border-radius: 6px;
+      margin-top: 16px;
+    }
+
+    .actions {
+      margin-top: 14px;
+    }
+
+    .summary-box {
+      background: #f7faf7;
+      border-radius: 10px;
+      padding: 12px 14px;
+      border: 1px solid #ebf2ed;
+    }
+
+    footer {
+      text-align: center;
+      padding: 22px 18px 26px;
+      color: var(--gris-suave);
+    }
+
+    @media (max-width: 540px) {
+      .panel { padding: 18px 14px; }
+      .actions { display: flex; flex-direction: column; }
+      .action { width: 100%; }
+    }
+
+    @media print {
+      body { background: white; }
+      header {
+        background: white;
+        color: black;
+      }
+      .no-print, button { display: none !important; }
+      .panel { box-shadow: none; border: 1px solid #ddd; }
+      .reference-grid, .types { display: block; }
+      .reference-card, .type { break-inside: avoid; margin-bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Escala de Bristol</h1>
+    <p>Valoración de la forma y consistencia de las heces</p>
+    <p>Instrumento de apoyo para enfermería</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>1. Datos del paciente</h2>
+      <div class="grid">
+        <div>
+          <label for="patient">Nombre o identificador</label>
+          <input id="patient" placeholder="Nombre o número de expediente" />
+        </div>
+        <div>
+          <label for="age">Edad (años)</label>
+          <input id="age" type="number" min="0" max="120" />
+        </div>
+        <div>
+          <label for="date">Fecha de valoración</label>
+          <input id="date" type="date" />
+        </div>
+        <div>
+          <label for="frequency">Frecuencia de evacuación</label>
+          <select id="frequency">
+            <option value="">Seleccionar</option>
+            <option>Menos de 3 veces por semana</option>
+            <option>3 veces por semana</option>
+            <option>4 a 7 veces por semana</option>
+            <option>Más de una vez al día</option>
+            <option>Variable</option>
+          </select>
+        </div>
+      </div>
+      <label for="symptoms">Síntomas asociados</label>
+      <textarea id="symptoms" rows="2" placeholder="Dolor, esfuerzo, urgencia, sangre, distensión, etc."></textarea>
+    </section>
+
+    <section class="panel">
+      <h2>2. Imágenes de referencia</h2>
+      <div id="referenceGrid" class="reference-grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>3. Selecciona el tipo de heces observado</h2>
+      <p class="muted">Elige una sola opción según la forma predominante de la evacuación. Las figuras son representaciones esquemáticas.</p>
+      <div class="types" id="types"></div>
+      <p id="selection" aria-live="polite">Ningún tipo seleccionado.</p>
+    </section>
+
+    <section class="panel">
+      <h2>4. Observaciones de enfermería</h2>
+      <label for="observations">Notas adicionales</label>
+      <textarea id="observations" rows="3" placeholder="Hidratación, alimentación, medicamentos y observaciones..."></textarea>
+      <div class="no-print actions">
+        <button class="action primary" onclick="evaluate()">Evaluar resultado</button>
+        <button class="action secondary" onclick="window.print()">Imprimir / Guardar PDF</button>
+        <button class="action secondary" onclick="resetForm()">Limpiar formulario</button>
+      </div>
+    </section>
+
+    <section class="panel" id="result" aria-live="polite">
+      <h2>5. Resultado de la valoración</h2>
+      <p id="patientResult" class="summary-box"></p>
+      <p class="result-number" id="typeResult"></p>
+      <p><strong>Descripción:</strong> <span id="description"></span></p>
+      <p><strong>Interpretación orientativa:</strong> <span id="interpretation"></span></p>
+      <p><strong>Consideraciones de enfermería:</strong> <span id="care"></span></p>
+      <p><strong>Frecuencia:</strong> <span id="frequencyResult"></span></p>
+      <p><strong>Síntomas:</strong> <span id="symptomsResult"></span></p>
+      <p><strong>Observaciones:</strong> <span id="observationsResult"></span></p>
+      <p class="notice">
+        Esta escala no sustituye la valoración clínica. Si hay sangre en las heces, heces negras alquitranadas, dolor abdominal intenso, deshidratación o cambios persistentes, se requiere valoración sanitaria.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>6. Interpretación general de la escala</h2>
+      <div class="grid">
+        <div><strong>Tipos 1 y 2</strong><p>Heces duras; pueden asociarse con estreñimiento.</p></div>
+        <div><strong>Tipos 3 y 4</strong><p>Heces formadas; suelen corresponder a consistencia habitual.</p></div>
+        <div><strong>Tipo 5</strong><p>Fragmentos blandos; su significado depende de la frecuencia y los síntomas.</p></div>
+        <div><strong>Tipos 6 y 7</strong><p>Heces pastosas o acuosas; pueden asociarse con tránsito intestinal acelerado o diarrea.</p></div>
+      </div>
+      <p class="muted">La interpretación depende también de la frecuencia, la dieta, la hidratación, los medicamentos y los síntomas del paciente.</p>
+    </section>
+  </main>
+
+  <footer>
+    Material educativo de apoyo para la valoración de enfermería.
+  </footer>
+
+  <script>
+    const bristol = [
+      {
+        type: 1,
+        title: "Bolitas duras separadas",
+        description: "Fragmentos duros, pequeños y separados, parecidos a nueces; difíciles de evacuar.",
+        interpretation: "Compatible con estreñimiento o tránsito intestinal lento.",
+        care: "Valorar hidratación, alimentación, actividad física, medicamentos y esfuerzo al evacuar.",
+        svg: `
+          <svg viewBox="0 0 180 100" aria-hidden="true">
+            <g fill="#7a9d88" stroke="#4e6e58" stroke-width="2">
+              <ellipse cx="40" cy="68" rx="18" ry="12" />
+              <ellipse cx="75" cy="61" rx="16" ry="11" />
+              <ellipse cx="108" cy="68" rx="17" ry="12" />
+              <ellipse cx="140" cy="60" rx="16" ry="11" />
+            </g>
+          </svg>
+        `
+      },
+      {
+        type: 2,
+        title: "Forma de salchicha grumosa",
+        description: "Heces con forma alargada, pero compuestas por grumos unidos.",
+        interpretation: "Puede sugerir estreñimiento o tránsito lento.",
+        care: "Investigar frecuencia, dolor, esfuerzo y cambios recientes del hábito intestinal.",
+        svg: `
+          <svg viewBox="0 0 180 100" aria-hidden="true">
+            <g fill="#7a9d88" stroke="#4e6e58" stroke-width="2">
+              <path d="M28 62c0-14 8-24 20-24 8 0 14 6 17 18 5 0 10 4 13 9 5-5 11-6 18-6 10 0 16 6 16 17 0 12-10 18-22 18H52c-14 0-22-9-22-19z"/>
+              <path d="M60 46c5-10 14-18 27-20" fill="none" stroke="#4e6e58" stroke-width="3"/>
+            </g>
+          </svg>
+        `
+      },
+      {
+        type: 3,
+        title: "Salchicha con grietas",
+        description: "Heces alargadas con grietas visibles en la superficie.",
+        interpretation: "Generalmente se considera una consistencia habitual.",
+        care: "Registrar la frecuencia y comprobar si existen síntomas asociados.",
+        svg: `
+          <svg viewBox="0 0 180 100" aria-hidden="true">
+            <g fill="#8fc18b" stroke="#4e6e58" stroke-width="2">
+              <path d="M20 60c10-16 22-25 38-25 10 0 18 5 23 11 5 7 8 15 17 18 12 4 29 1 38-7 5 11-3 24-18 28H48c-16 0-30-11-28-25z"/>
+              <g stroke="#4e6e58" stroke-width="2" fill="none">
+                <path d="M45 35l12 18M60 30l14 21M91 32l13 19M116 40l12 16"/>
+              </g>
+            </g>
+          </svg>
+        `
+      },
+      {
+        type: 4,
+        title: "Lisa y blanda",
+        description: "Heces suaves, lisas, blandas y con forma alargada o de serpiente.",
+        interpretation: "Generalmente corresponde a una consistencia habitual.",
+        care: "Mantener hábitos saludables y registrar cambios si aparecen.",
+        svg: `
+          <svg viewBox="0 0 180 100" aria-hidden="true">
+            <g fill="#9ed38f" stroke="#4e6e58" stroke-width="2">
+              <path d="M14 62c12-18 30-26 50-26 17 0 25 8 34 16 10 10 18 13 33 13 12 0 24-6 34-19 5 12-1 24-16 31H40c-15 0-28-8-26-15z"/>
+            </g>
+          </svg>
+        `
+      },
+      {
+        type: 5,
+        title: "Fragmentos blandos definidos",
+        description: "Porciones blandas, con bordes definidos y fáciles de evacuar.",
+        interpretation: "Puede encontrarse dentro de la variación normal; valorar frecuencia y contexto.",
+        care: "Observar frecuencia, urgencia y relación con la alimentación o medicamentos.",
+        svg: `
+          <svg viewBox="0 0 180 100" aria-hidden="true">
+            <g fill="#a9d8ad" stroke="#4e6e58" stroke-width="2">
+              <ellipse cx="44" cy="64" rx="18" ry="13"/>
+              <ellipse cx="83" cy="55" rx="21" ry="15"/>
+              <ellipse cx="123" cy="64" rx="18" ry="12"/>
+              <ellipse cx="153" cy="56" rx="16" ry="10"/>
+            </g>
+          </svg>
+        `
+      },
+      {
+        type: 6,
+        title: "Fragmentos pastosos",
+        description: "Heces blandas y pastosas, con bordes irregulares.",
+        interpretation: "Puede relacionarse con tránsito acelerado o diarrea, especialmente si aumenta la frecuencia.",
+        care: "Valorar pérdidas de líquidos, frecuencia, duración y signos de deshidratación.",
+        svg: `
+          <svg viewBox="0 0 180 100" aria-hidden="true">
+            <g fill="#a7d8d1" stroke="#4e6e58" stroke-width="2">
+              <path d="M18 58c8-11 18-17 29-17 9 0 13 5 18 8 8 5 12 5 23 7 13 2 23 10 28 20 8 0 17-4 27-13 5 9-6 23-23 30H47c-19 0-30-12-29-35z"/>
+              <g fill="none" stroke="#4e6e58" stroke-width="2">
+                <path d="M37 51c10 14 19 18 31 18M94 48c10 14 17 18 30 17M77 67c8 5 16 7 27 7"/>
+              </g>
+            </g>
+          </svg>
+        `
+      },
+      {
+        type: 7,
+        title: "Líquidas, sin partes sólidas",
+        description: "Heces completamente acuosas, sin fragmentos sólidos.",
+        interpretation: "Compatible con diarrea en el contexto clínico apropiado.",
+        care: "Valorar hidratación y pérdidas; vigilar signos de alarma y solicitar evaluación clínica cuando corresponda.",
+        svg: `
+          <svg viewBox="0 0 180 100" aria-hidden="true">
+            <g fill="#a8d4ef" stroke="#4e6e58" stroke-width="2">
+              <path d="M18 64c10-12 20-19 34-20 15-1 26 7 35 14 10 9 18 12 31 12 12 0 24-8 35-15 5 10-2 22-13 28H45c-13 0-25-7-27-19z"/>
+              <path d="M44 78c11-6 21-8 32-8M94 82c11-7 20-10 31-10" fill="none" stroke="#4e6e58" stroke-width="2"/>
+            </g>
+          </svg>
+        `
+      }
+    ];
+
+    let selectedType = null;
+
+    const referenceGrid = document.getElementById("referenceGrid");
+    const typesContainer = document.getElementById("types");
+
+    function buildReferenceCards() {
+      bristol.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "reference-card";
+        card.innerHTML = `
+          <div class="card-top">
+            <span class="type-badge">${item.type}</span>
+            <h3>Tipo ${item.type}</h3>
+          </div>
+          <div class="ref-figure">${item.svg}</div>
+          <div><strong>${item.title}</strong></div>
+        `;
+        referenceGrid.appendChild(card);
+      });
+    }
+
+    function buildTypeButtons() {
+      bristol.forEach(item => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "type";
+        button.setAttribute("aria-pressed", "false");
+        button.innerHTML = `
+          <div class="type-top">
+            <span class="number">${item.type}</span>
+            <strong>Tipo ${item.type}</strong>
+          </div>
+          <div class="shape">${item.svg}</div>
+          <strong>${item.title}</strong>
+          <p class="muted">${item.description}</p>
+        `;
+        button.addEventListener("click", () => selectType(item.type));
+        typesContainer.appendChild(button);
+      });
+    }
+
+    function selectType(type) {
+      selectedType = type;
+      document.querySelectorAll(".type").forEach((button, index) => {
+        const selected = bristol[index].type === type;
+        button.classList.toggle("selected", selected);
+        button.setAttribute("aria-pressed", String(selected));
+      });
+
+      const selected = bristol.find(item => item.type === type);
+      document.getElementById("selection").textContent =
+        "Has seleccionado el tipo " + type + ": " + selected.title + ".";
+    }
+
+    function evaluate() {
+      if (selectedType === null) {
+        alert("Selecciona primero un tipo de heces.");
+        return;
+      }
+
+      const item = bristol.find(entry => entry.type === selectedType);
+      const patient = document.getElementById("patient").value.trim();
+      const age = document.getElementById("age").value;
+      const date = document.getElementById("date").value;
+
+      document.getElementById("patientResult").textContent =
+        "Paciente: " + (patient || "No especificado") +
+        " | Edad: " + (age ? age + " años" : "No especificada") +
+        " | Fecha: " + (date || "No especificada");
+
+      document.getElementById("typeResult").textContent = "Tipo " + item.type + " — " + item.title;
+      document.getElementById("description").textContent = item.description;
+      document.getElementById("interpretation").textContent = item.interpretation;
+      document.getElementById("care").textContent = item.care;
+      document.getElementById("frequencyResult").textContent = document.getElementById("frequency").value || "No especificada";
+      document.getElementById("symptomsResult").textContent = document.getElementById("symptoms").value.trim() || "No especificados";
+      document.getElementById("observationsResult").textContent = document.getElementById("observations").value.trim() || "Sin observaciones";
+
+      const resultSection = document.getElementById("result");
+      resultSection.style.display = "block";
+      resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function resetForm() {
+      document.querySelectorAll("input, textarea, select").forEach(field => {
+        field.value = "";
+      });
+
+      selectedType = null;
+      document.querySelectorAll(".type").forEach(button => {
+        button.classList.remove("selected");
+        button.setAttribute("aria-pressed", "false");
+      });
+
+      document.getElementById("selection").textContent = "Ningún tipo seleccionado.";
+      document.getElementById("result").style.display = "none";
+      document.getElementById("date").value = new Date().toISOString().split("T")[0];
+    }
+
+    buildReferenceCards();
+    buildTypeButtons();
+    document.getElementById("date").value = new Date().toISOString().split("T")[0];
+  </script>
+</body>
+</html>

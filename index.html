@@ -25,6 +25,11 @@
       --warning-bg: #fff7df;
       --success: #1f8f73;
       --shadow: rgba(12, 30, 58, 0.14);
+      --clinica-1: #dfeafc;
+      --clinica-2: #cfe8df;
+      --clinica-3: #f6e8c7;
+      --clinica-4: #e9f7f5;
+      --clinica-5: #f7e6f3;
     }
 
     * { box-sizing: border-box; }
@@ -129,17 +134,31 @@
     }
 
     .reference-card {
-      border: 2px solid var(--borde);
+      border: 1.5px solid var(--borde);
       border-radius: 16px;
       padding: 14px;
       background: linear-gradient(180deg, #ffffff 0%, #f3faff 100%);
+      box-shadow: 0 8px 20px rgba(16, 45, 92, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reference-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 12px;
+      background: linear-gradient(90deg, var(--azul-cielo), var(--turquesa), var(--verde-mint));
+      opacity: 0.9;
     }
 
     .reference-card .card-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin: 10px 0 8px;
+      position: relative;
+      z-index: 1;
     }
 
     .type-badge {
@@ -163,21 +182,23 @@
     }
 
     .ref-figure {
-      background: linear-gradient(180deg, #f3fbff 0%, #effaf5 100%);
+      background: linear-gradient(180deg, #f9fcff 0%, #effaf5 100%);
       border-radius: 14px;
       padding: 10px;
       margin: 8px 0 10px;
-      min-height: 96px;
+      min-height: 102px;
       display: flex;
       align-items: center;
       justify-content: center;
       border: 1px solid #edf5ff;
+      position: relative;
+      z-index: 1;
     }
 
     .ref-figure svg {
       width: 100%;
       max-width: 170px;
-      height: 90px;
+      height: 92px;
       display: block;
     }
 
@@ -439,11 +460,20 @@
         care: "Valorar hidratación, alimentación, actividad física, medicamentos y esfuerzo al evacuar.",
         svg: `
           <svg viewBox="0 0 180 100" aria-hidden="true">
-            <g fill="#7a9d88" stroke="#4e6e58" stroke-width="2">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0%" stop-color="#7a9d88"/>
+                <stop offset="100%" stop-color="#4e6e58"/>
+              </linearGradient>
+            </defs>
+            <g fill="url(#g1)" stroke="#466655" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <ellipse cx="40" cy="68" rx="18" ry="12" />
-              <ellipse cx="75" cy="61" rx="16" ry="11" />
-              <ellipse cx="108" cy="68" rx="17" ry="12" />
-              <ellipse cx="140" cy="60" rx="16" ry="11" />
+              <ellipse cx="76" cy="60" rx="17" ry="11.5" />
+              <ellipse cx="109" cy="67" rx="17" ry="12" />
+              <ellipse cx="143" cy="58" rx="16" ry="10.5" />
+            </g>
+            <g fill="none" stroke="#dfeaf8" stroke-width="2" opacity="0.9">
+              <path d="M25 68c6-4 11-5 17-5M60 58c7-4 12-6 18-6M93 65c7-4 13-5 20-5M128 56c6-3 12-4 18-4"/>
             </g>
           </svg>
         `
@@ -456,9 +486,17 @@
         care: "Investigar frecuencia, dolor, esfuerzo y cambios recientes del hábito intestinal.",
         svg: `
           <svg viewBox="0 0 180 100" aria-hidden="true">
-            <g fill="#7a9d88" stroke="#4e6e58" stroke-width="2">
-              <path d="M28 62c0-14 8-24 20-24 8 0 14 6 17 18 5 0 10 4 13 9 5-5 11-6 18-6 10 0 16 6 16 17 0 12-10 18-22 18H52c-14 0-22-9-22-19z"/>
-              <path d="M60 46c5-10 14-18 27-20" fill="none" stroke="#4e6e58" stroke-width="3"/>
+            <defs>
+              <linearGradient id="g2" x1="0" x2="1">
+                <stop offset="0%" stop-color="#9bbda5"/>
+                <stop offset="100%" stop-color="#5a8467"/>
+              </linearGradient>
+            </defs>
+            <g fill="url(#g2)" stroke="#496d5d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M28 63c0-16 12-27 28-27 10 0 17 4 23 12 6-5 13-8 22-8 13 0 23 9 28 24 1 7 0 14-4 19-6 9-16 15-29 15H59c-18 0-31-11-31-35z"/>
+            </g>
+            <g fill="none" stroke="#e1f0f7" stroke-width="2.2" opacity="0.9">
+              <path d="M44 52c7-7 17-12 29-13M88 52c8-7 17-11 28-11"/>
             </g>
           </svg>
         `
@@ -471,11 +509,17 @@
         care: "Registrar la frecuencia y comprobar si existen síntomas asociados.",
         svg: `
           <svg viewBox="0 0 180 100" aria-hidden="true">
-            <g fill="#8fc18b" stroke="#4e6e58" stroke-width="2">
-              <path d="M20 60c10-16 22-25 38-25 10 0 18 5 23 11 5 7 8 15 17 18 12 4 29 1 38-7 5 11-3 24-18 28H48c-16 0-30-11-28-25z"/>
-              <g stroke="#4e6e58" stroke-width="2" fill="none">
-                <path d="M45 35l12 18M60 30l14 21M91 32l13 19M116 40l12 16"/>
-              </g>
+            <defs>
+              <linearGradient id="g3" x1="0" x2="1">
+                <stop offset="0%" stop-color="#8fc18b"/>
+                <stop offset="100%" stop-color="#5f8b5d"/>
+              </linearGradient>
+            </defs>
+            <g fill="url(#g3)" stroke="#547b57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 60c10-18 25-28 43-28 11 0 20 5 27 13 6 7 12 12 20 14 13 3 29 0 38-10 3 12-2 22-14 29H49c-15 0-29-8-31-18z"/>
+            </g>
+            <g fill="none" stroke="#eaf4ff" stroke-width="2.3" opacity="0.9">
+              <path d="M43 35l11 17M62 30l14 20M95 34l13 19M117 41l11 16"/>
             </g>
           </svg>
         `
@@ -488,8 +532,17 @@
         care: "Mantener hábitos saludables y registrar cambios si aparecen.",
         svg: `
           <svg viewBox="0 0 180 100" aria-hidden="true">
-            <g fill="#9ed38f" stroke="#4e6e58" stroke-width="2">
-              <path d="M14 62c12-18 30-26 50-26 17 0 25 8 34 16 10 10 18 13 33 13 12 0 24-6 34-19 5 12-1 24-16 31H40c-15 0-28-8-26-15z"/>
+            <defs>
+              <linearGradient id="g4" x1="0" x2="1">
+                <stop offset="0%" stop-color="#a7d9a0"/>
+                <stop offset="100%" stop-color="#6fa56d"/>
+              </linearGradient>
+            </defs>
+            <g fill="url(#g4)" stroke="#537f58" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 62c8-15 22-25 40-29 13-3 23 0 31 9 10 11 18 16 33 18 15 2 28-3 39-15 4 15-3 27-18 35H47c-17 0-31-9-33-18z"/>
+            </g>
+            <g fill="none" stroke="#edf8ff" stroke-width="2" opacity="0.85">
+              <path d="M36 59c11-11 24-17 39-18M88 55c10-7 20-10 34-10M124 56c8-5 18-7 28-5"/>
             </g>
           </svg>
         `
@@ -502,11 +555,20 @@
         care: "Observar frecuencia, urgencia y relación con la alimentación o medicamentos.",
         svg: `
           <svg viewBox="0 0 180 100" aria-hidden="true">
-            <g fill="#a9d8ad" stroke="#4e6e58" stroke-width="2">
-              <ellipse cx="44" cy="64" rx="18" ry="13"/>
-              <ellipse cx="83" cy="55" rx="21" ry="15"/>
-              <ellipse cx="123" cy="64" rx="18" ry="12"/>
-              <ellipse cx="153" cy="56" rx="16" ry="10"/>
+            <defs>
+              <linearGradient id="g5" x1="0" x2="1">
+                <stop offset="0%" stop-color="#a7dcb3"/>
+                <stop offset="100%" stop-color="#70a77b"/>
+              </linearGradient>
+            </defs>
+            <g fill="url(#g5)" stroke="#4b7d62" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="42" cy="67" rx="18" ry="12"/>
+              <ellipse cx="80" cy="57" rx="21" ry="13"/>
+              <ellipse cx="122" cy="66" rx="18" ry="12"/>
+              <ellipse cx="155" cy="57" rx="15" ry="9.5"/>
+            </g>
+            <g fill="none" stroke="#edf8ff" stroke-width="2" opacity="0.9">
+              <path d="M28 66c5-3 9-4 15-4M69 56c8-4 14-6 21-6M109 66c6-4 11-5 18-5M142 56c4-2 9-3 13-3"/>
             </g>
           </svg>
         `
@@ -519,11 +581,17 @@
         care: "Valorar pérdidas de líquidos, frecuencia, duración y signos de deshidratación.",
         svg: `
           <svg viewBox="0 0 180 100" aria-hidden="true">
-            <g fill="#a7d8d1" stroke="#4e6e58" stroke-width="2">
-              <path d="M18 58c8-11 18-17 29-17 9 0 13 5 18 8 8 5 12 5 23 7 13 2 23 10 28 20 8 0 17-4 27-13 5 9-6 23-23 30H47c-19 0-30-12-29-35z"/>
-              <g fill="none" stroke="#4e6e58" stroke-width="2">
-                <path d="M37 51c10 14 19 18 31 18M94 48c10 14 17 18 30 17M77 67c8 5 16 7 27 7"/>
-              </g>
+            <defs>
+              <linearGradient id="g6" x1="0" x2="1">
+                <stop offset="0%" stop-color="#a3d7d5"/>
+                <stop offset="100%" stop-color="#67a9b0"/>
+              </linearGradient>
+            </defs>
+            <g fill="url(#g6)" stroke="#4b7d87" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 62c9-12 19-18 33-18 10 0 16 4 22 9 8 7 15 10 25 11 13 2 23 9 29 18 8 0 16-4 25-12 4 10-2 21-14 28H47c-16 0-31-11-29-36z"/>
+            </g>
+            <g fill="none" stroke="#ebf9ff" stroke-width="2" opacity="0.9">
+              <path d="M42 53c9 12 17 18 30 18M89 49c9 12 16 17 29 17M75 68c9 5 17 7 27 7"/>
             </g>
           </svg>
         `
@@ -536,9 +604,17 @@
         care: "Valorar hidratación y pérdidas; vigilar signos de alarma y solicitar evaluación clínica cuando corresponda.",
         svg: `
           <svg viewBox="0 0 180 100" aria-hidden="true">
-            <g fill="#a8d4ef" stroke="#4e6e58" stroke-width="2">
-              <path d="M18 64c10-12 20-19 34-20 15-1 26 7 35 14 10 9 18 12 31 12 12 0 24-8 35-15 5 10-2 22-13 28H45c-13 0-25-7-27-19z"/>
-              <path d="M44 78c11-6 21-8 32-8M94 82c11-7 20-10 31-10" fill="none" stroke="#4e6e58" stroke-width="2"/>
+            <defs>
+              <linearGradient id="g7" x1="0" x2="1">
+                <stop offset="0%" stop-color="#aad3ee"/>
+                <stop offset="100%" stop-color="#5e8ec4"/>
+              </linearGradient>
+            </defs>
+            <g fill="url(#g7)" stroke="#4373a8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 63c12-13 22-18 38-19 16-1 27 7 38 16 11 9 20 13 32 13 11 0 23-7 35-15 5 10-1 22-15 30H45c-14 0-27-8-27-25z"/>
+            </g>
+            <g fill="none" stroke="#edf8ff" stroke-width="2" opacity="0.9">
+              <path d="M42 76c11-7 23-10 36-10M94 80c11-7 20-9 31-9"/>
             </g>
           </svg>
         `
